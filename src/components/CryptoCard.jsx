@@ -1,3 +1,5 @@
+import { formatPrice } from "../utils/formatter";
+
 export default function CryptoCard({ crypto }) {
   return (
     <div className="crypto-card">
@@ -12,7 +14,7 @@ export default function CryptoCard({ crypto }) {
         </div>
       </div>
       <div className="crypto-price">
-        <p className="price">{crypto.current_price}</p>
+        <p className="price">{formatPrice(crypto.current_price)}</p>
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
 export const formatPrice = (price) => {
   const decimals = price < 0.01 ? 8 : 2;
 
-  return new Intl.NumberFormat("de-DE", {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "EUR",
+    currency: "USD",
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(price);

@@ -7,19 +7,19 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchCryptoData;
-  }, []);
+    const fetchCryptoData = async () => {
+      try {
+        const data = await fetchCryptos();
+        setCryptoList(data);
+      } catch (err) {
+        console.error("Error fetching crypto: ", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const fetchCryptoData = async () => {
-    try {
-      const data = await fetchCryptos();
-      setCryptoList(data);
-    } catch (err) {
-      console.error("Error fetching crypto: ", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    fetchCryptoData();
+  }, []);
 
   return (
     <div className="app">

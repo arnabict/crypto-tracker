@@ -8,6 +8,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState("grid");
   const [sortBy, setSortBy] = useState("market_cap_rank");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchCryptoData = async () => {
@@ -26,7 +27,11 @@ export default function Home() {
 
   useEffect(() => {
     const filterAndSort = () => {
-      let filtered = [...cryptoList];
+      let filtered = cryptoList.filter(
+        (crypto) =>
+          crypto.name.toLowerCase().includes(searchQuery.toLowerCase()),
+        crypto.symbol.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
       filtered.sort((a, b) => {
         switch (sortBy) {
           case "name":
@@ -49,10 +54,27 @@ export default function Home() {
     };
 
     filterAndSort();
-  }, [sortBy, cryptoList]);
+  }, [sortBy, cryptoList, searchQuery]);
 
   return (
     <div className="app">
+      <header className="header">
+        <div className="header-content">
+          <div className="logo-section">
+            <h1>🚀 Crypto Tracker</h1>
+            <p>Real-time cryptocurrency prices and market data</p>
+          </div>
+          <div className="search-section">
+            <input
+              type="text"
+              placeholder="Search crytos..."
+              className="search-input"
+              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchQuery}
+            />
+          </div>
+        </div>
+      </header>
       <div className="controls">
         <div className="filter-group">
           <label>Sort by: </label>

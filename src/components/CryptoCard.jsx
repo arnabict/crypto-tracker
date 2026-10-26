@@ -29,6 +29,12 @@ export default function CryptoCard({ crypto }) {
             ${formatMarketCap(crypto.market_cap)}
           </span>
         </div>
+        <div className="stat">
+          <span className="stat-label">Volume</span>
+          <span className="stat-value">
+            ${formatMarketCap(crypto.total_volume)}
+          </span>
+        </div>
       </div>
     </div>
   );

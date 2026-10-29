@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router";
 import { fetchCoinData } from "../api/coinGecko";
 import { useEffect, useState } from "react";
+import { formatPrice } from "../utils/formatter";
 
 export default function CoinDetail() {
   const { id } = useParams();
@@ -51,6 +52,9 @@ export default function CoinDetail() {
     );
   }
 
+  const priceChange = coin.market_data.price_change_percentage_24h || 0;
+  const isPositive = priceChange >= 0;
+
   return (
     <div className="app">
       <header className="header">
@@ -74,6 +78,16 @@ export default function CoinDetail() {
             </div>
           </div>
           <span className="rank">Rank #{coin.market_data.market_cap_rank}</span>
+        </div>
+        <div className="coin-price-section">
+          <div className="current-price">
+            <h2>{formatPrice(coin.market_data.current_price.usd)}</h2>
+            <span
+              className={`change-badge ${isPositive ? "positive" : "negative"}`}
+            >
+              {isPositive ? "↑" : "↓"} {Math.abs(priceChange).toFixed(2)}%
+            </span>
+          </div>
         </div>
       </div>
     </div>

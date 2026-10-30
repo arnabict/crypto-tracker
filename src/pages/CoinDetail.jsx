@@ -1,12 +1,21 @@
 import { useNavigate, useParams } from "react-router";
-import { fetchCoinData } from "../api/coinGecko";
+import { fetchChartData, fetchCoinData } from "../api/coinGecko";
 import { useEffect, useState } from "react";
 import { formatPrice } from "../utils/formatter";
+import {
+  ResponsiveContainer,
+  LineChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Line,
+} from "recharts";
 
 export default function CoinDetail() {
   const { id } = useParams();
   const [coin, setCoin] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [chartData, setChartData] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,6 +31,29 @@ export default function CoinDetail() {
     };
 
     loadCoinData();
+  }, [id]);
+
+  useEffect(() => {
+    const loadChartData = async () => {
+      try {
+        const data = await fetchChartData(id);
+        const formattedData = data.prices.map((price) => ({
+          time: new Date(price[0]).toLocaleDate("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
+
+          price: price[1].toFixed(2),
+        }));
+        setChartData(formattedData);
+      } catch (err) {
+        console.error("Error fetching crypto: ", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadChartData();
   }, [id]);
 
   if (isLoading) {
@@ -88,6 +120,40 @@ export default function CoinDetail() {
               {isPositive ? "↑" : "↓"} {Math.abs(priceChange).toFixed(2)}%
             </span>
           </div>
+          <div className="price-ranges">
+            <div className="price-range">
+              <span className="range-label">24h High</span>
+              <span className="range-value">
+                {formatPrice(coin.market_data.high_24h.usd)}
+              </span>
+            </div>
+            <div className="price-range">
+              <span className="range-label">24h Low</span>
+              <span className="range-value">
+                {formatPrice(coin.market_data.low_24h.usd)}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="chart-section">
+          <h3>Price Chart (7 Days)</h3>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={chartData}>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="rgba(255,255,255, 0.1)"
+              />
+              <XAxis dataKey="time" />
+              <YAxis />
+              <Line
+                type="monotone"
+                dataKey="price"
+                stroke="#ADD8E6"
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

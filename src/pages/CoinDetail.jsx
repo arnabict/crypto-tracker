@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router";
 import { fetchChartData, fetchCoinData } from "../api/coinGecko";
 import { useEffect, useState } from "react";
-import { formatPrice } from "../utils/formatter";
+import { formatMarketCap, formatPrice } from "../utils/formatter";
 import {
   ResponsiveContainer,
   LineChart,
@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis,
   Line,
+  Tooltip,
 } from "recharts";
 
 export default function CoinDetail() {
@@ -143,8 +144,24 @@ export default function CoinDetail() {
                 strokeDasharray="3 3"
                 stroke="rgba(255,255,255, 0.1)"
               />
-              <XAxis dataKey="time" />
-              <YAxis />
+              <XAxis
+                dataKey="time"
+                stroke="#9ca3af"
+                style={{ fontSize: "12px" }}
+              />
+              <YAxis
+                stroke="#9ca3af"
+                style={{ fontSize: "12px" }}
+                domain={["auto", "auto"]}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "rgba(20, 20, 40, 0.95)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "8px",
+                  color: "#e0e0e0",
+                }}
+              />
               <Line
                 type="monotone"
                 dataKey="price"
@@ -155,7 +172,36 @@ export default function CoinDetail() {
             </LineChart>
           </ResponsiveContainer>
         </div>
+        <div className="stats-grid">
+          <div className="stat-card">
+            <span className="stat-label">Market Cap</span>
+            <span className="stat-value">
+              ${formatMarketCap(coin.market_data.market_cap.usd)}
+            </span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">Volume (24)</span>
+            <span className="stat-value">
+              ${formatMarketCap(coin.market_data.total_volume.usd)}
+            </span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">Circulating Supply</span>
+            <span className="stat-value">
+              {coin.market_data.circulating_supply?.toLocaleString() || "N/A"}
+            </span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">Total Supply</span>
+            <span className="stat-value">
+              {coin.market_data.total_supply?.toLocaleString() || "N/A"}
+            </span>
+          </div>
+        </div>
       </div>
+      <footer className="footer">
+        <p>Data provided by CoinGecko API · Updated every 30 seconds</p>
+      </footer>
     </div>
   );
 }
